@@ -41,6 +41,7 @@ class Game:
     def run(self):
         # Game loop: events - update - draw    
         if self.death_count == self.lives:
+            self.lives = 3
             self.death_count = 0
             self.historical_scores.append(sum(self.scores))
             self.scores = []
@@ -67,7 +68,7 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
-        self.power_up_manager.update(self.score, self.game_speed, self.player)
+        self.power_up_manager.update(self.score, self.game_speed, self.player, self)
 
     def update_score(self):
         self.score += 1
@@ -96,7 +97,7 @@ class Game:
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
     def draw_lives(self):
-        self.print_text(22,f"Lives: {self.lives -self.death_count}", 1000, 70)
+        self.print_text(22,f"Lives: {self.lives - self.death_count}", 1000, 70)
 
     def draw_score(self):
         self.print_text(22, f"Score: {self.score}", 1000, 50)

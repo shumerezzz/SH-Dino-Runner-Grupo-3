@@ -77,3 +77,5 @@ FONT_STYLE = "freesansbold.ttf"
 SHIELD_TYPE = "shield"
 
 HAMMER_TYPE = "hammer"
+
+HEART_TYPE = "heart"
