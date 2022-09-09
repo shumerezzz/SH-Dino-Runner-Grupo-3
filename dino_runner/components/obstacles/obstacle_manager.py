@@ -21,8 +21,13 @@ class ObstacleManager:
                     game.death_count += 1
                     game.playing = False
                     break
+                elif game.player.type == SHIELD_TYPE and (type(obstacle) is Bird or type(obstacle) is Cactus):
+                    if game.score >= 50:
+                        game.score -= 50
+                        break
                 elif game.player.type == HAMMER_TYPE and type(obstacle) is Bird:
                     game.score += 100
+                    break
                 elif game.player.type == HAMMER_TYPE and type(obstacle) is Cactus:
                     pygame.time.delay(500)
                     game.death_count += 1

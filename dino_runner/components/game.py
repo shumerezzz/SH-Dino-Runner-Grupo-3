@@ -3,7 +3,7 @@ from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
-from dino_runner.utils.constants import BG, DEFAULT_TYPE, FONT_STYLE, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, DEFAULT_TYPE, FONT_STYLE, GAME_OVER, HAMMER, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, SHIELD, TITLE, FPS
 
 
 class Game:
@@ -24,8 +24,10 @@ class Game:
 
         self.running =  False
         self.score = 0
+        self.lives = 3
         self.death_count = 0
         self.scores = []
+        self.historical_scores = []
 
     def execute(self):
         self.running = True
@@ -38,6 +40,10 @@ class Game:
 
     def run(self):
         # Game loop: events - update - draw    
+        if self.death_count == self.lives:
+            self.death_count = 0
+            self.historical_scores.append(sum(self.scores))
+            self.scores = []
         self.score = 0
         self.player = Dinosaur()
         self.game_speed = 30
@@ -73,6 +79,7 @@ class Game:
         self.screen.fill((255, 255, 255)) 
         self.draw_background() 
         self.draw_score()
+        self.draw_lives()
         self.draw_power_up_time()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
@@ -88,6 +95,8 @@ class Game:
             self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
+    def draw_lives(self):
+        self.print_text(22,f"Lives: {self.lives -self.death_count}", 1000, 70)
 
     def draw_score(self):
         self.print_text(22, f"Score: {self.score}", 1000, 50)
@@ -119,14 +128,28 @@ class Game:
         half_screen_width = SCREEN_WIDTH //2
         if self.death_count == 0:
             self.print_text(30, "Press any key to start",  half_screen_width, half_screen_height)
-        else:
+            if len(self.historical_scores) > 0:
+                self.print_text(30, f"Highest score: {max(self.historical_scores)}",  half_screen_width , half_screen_height - 250)
+            self.screen.blit(SHIELD,(half_screen_width - 200, half_screen_height + 50))
+            self.print_text(20, "Shield: you become invulnerable but ",  half_screen_width - 200, half_screen_height + 150)
+            self.print_text(20, "your score will decrese by 50 ",  half_screen_width - 200, half_screen_height + 200)
+            self.print_text(20, "for collition with any obstacle ",  half_screen_width - 200, half_screen_height + 250)
+            self.screen.blit(HAMMER,(half_screen_width + 200, half_screen_height + 50))
+            self.print_text(20, "Hammer: you can kill birds,",  half_screen_width + 200, half_screen_height + 150)
+            self.print_text(20, "cactus can still kill you",  half_screen_width + 200, half_screen_height + 200)
+        elif self.death_count < self.lives and self.death_count > 0:
             self.print_text(30, "Press any key to start",  half_screen_width, half_screen_height)
             self.print_text(30, f"Last score: {self.score}",  half_screen_width, half_screen_height + 100)
-            # if(self.score > max(self.scores)):
-            #     self.print_text(30, f"Max score: {self.score}",  half_screen_width, half_screen_height + 150)
-            # else:
             self.print_text(30, f"Max score: {max(self.scores)}",  half_screen_width, half_screen_height + 150)                
             self.print_text(30, f"Number of deaths: {self.death_count}",  half_screen_width, half_screen_height + 200)
+        else:
+            self.screen.blit(GAME_OVER,(half_screen_width - 160 , half_screen_height ))
+            self.print_text(30, "Press any key to play again",  half_screen_width, half_screen_height + 100)
+            self.print_text(30, f"Max score: {max(self.scores)}",  half_screen_width, half_screen_height + 150)
+            self.print_text(30, f"Total Achieved: {sum(self.scores)}",  half_screen_width, half_screen_height + 200)
+            if len(self.historical_scores) > 0:
+                self.print_text(30, f"Highest score: {max(self.historical_scores)}",  half_screen_width , half_screen_height - 250)
+
         self.screen.blit(ICON,(half_screen_width - 20, half_screen_height - 140))
 
         pygame.display.update() 

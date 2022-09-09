@@ -12,7 +12,7 @@ class PowerUpManager():
     def generate_power_up(self, score):
         if len(self.power_ups) == 0 and self.when_appears == score:
             self.power_ups_type_list = [Shield(), Hammer()]
-            self.power_ups.append(Hammer())
+            self.power_ups.append(random.choice(self.power_ups_type_list))
             self.when_appears = score + random.randint(200, 300)
 
     def update(self, score, game_speed, player: Dinosaur):
