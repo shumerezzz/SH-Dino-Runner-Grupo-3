@@ -39,6 +39,7 @@ class Game:
     def run(self):
         # Game loop: events - update - draw    
         self.score = 0
+        self.player = Dinosaur()
         self.game_speed = 30
         self.playing = True
         self.obstacle_manager.reset_obstacles()
@@ -60,7 +61,6 @@ class Game:
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
-        #self.death_count = self.obstacle_manager.death_count
         self.power_up_manager.update(self.score, self.game_speed, self.player)
 
     def update_score(self):
@@ -120,8 +120,6 @@ class Game:
         if self.death_count == 0:
             self.print_text(30, "Press any key to start",  half_screen_width, half_screen_height)
         else:
-            print("muerto")
-            print(self.death_count)
             self.print_text(30, "Press any key to start",  half_screen_width, half_screen_height)
             self.print_text(30, f"Last score: {self.score}",  half_screen_width, half_screen_height + 100)
             # if(self.score > max(self.scores)):
